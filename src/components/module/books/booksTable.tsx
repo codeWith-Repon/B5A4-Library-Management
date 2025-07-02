@@ -44,7 +44,7 @@ const BooksTable = () => {
   return (
     <div className='mt-4 w-full overflow-auto border border-gray-200 rounded-lg shadow dark:border-gray-800'>
       <Table>
-        <TableCaption>List of all books in the system.</TableCaption>
+        <TableCaption className='sr-only'>List of all books in the system.</TableCaption>
         <TableHeader>
           <TableRow className='bg-gray-100 dark:bg-gray-800'>
             <TableHead className='pl-[22px]'>Title</TableHead>

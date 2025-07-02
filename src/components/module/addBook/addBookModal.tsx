@@ -37,7 +37,7 @@ const AddBookModal = ({ open, setOpen, defaultValues }: Props) => {
       genre: '',
       isbn: '',
       description: '',
-      copies: 1
+      copies: 0,
     },
   });
   const [addBook] = useAddBookMutation();
