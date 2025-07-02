@@ -11,13 +11,25 @@ import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { BookOpen, Edit, Trash2 } from 'lucide-react';
 import { useDeleteBookMutation, useGetBooksQuery } from '@/redux/api/baseApi';
-import type { IBook } from '@/types';
+import { type IBook } from '@/types';
 import BookTableSkeleton from './bookTableSkeleton';
 import { toast } from 'sonner';
+import { useState } from 'react';
+import AddBookModal from '../addBook/addBookModal';
 
 const BooksTable = () => {
+  const [modalOpen, setmodalOpen] = useState(false);
+  const [selectedBook, setSelectedBook] = useState<IBook | null>(null);
+  // console.log(selectedBook);
+
   const { data, isLoading } = useGetBooksQuery(undefined);
   const [deleteBook] = useDeleteBookMutation();
+
+  const handleEdit = (book: IBook) => {
+    setSelectedBook(book);
+    setmodalOpen(true);
+    // console.log(book);
+  };
 
   const handleDelete = async (id: string) => {
     try {
@@ -72,11 +84,14 @@ const BooksTable = () => {
                   )}
                 </TableCell>
                 <TableCell className='text-right pr-[22px]'>
-                  <Link to={`/edit-book/${book._id}`}>
-                    <Button variant={'ghost'} size='sm'>
-                      <Edit />
-                    </Button>
-                  </Link>
+                  <Button
+                    variant={'ghost'}
+                    size='sm'
+                    onClick={() => handleEdit(book)}
+                  >
+                    <Edit />
+                  </Button>
+
                   <Button
                     variant={'ghost'}
                     size='sm'
@@ -96,6 +111,12 @@ const BooksTable = () => {
           )}
         </TableBody>
       </Table>
+
+      <AddBookModal
+        open={modalOpen}
+        setOpen={setmodalOpen}
+        defaultValues={selectedBook}
+      />
     </div>
   );
 };

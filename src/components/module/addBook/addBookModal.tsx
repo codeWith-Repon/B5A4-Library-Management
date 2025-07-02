@@ -17,27 +17,52 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
-import { useAddBookMutation } from '@/redux/api/baseApi';
-import type { IBookFormData } from '@/types';
+import { useAddBookMutation, useEditBookMutation } from '@/redux/api/baseApi';
+import type { IBook, IBookFormData } from '@/types';
+import { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 
-const AddBookModal = ({
-  open,
-  setOpen,
-}: {
+type Props = {
   open: boolean;
   setOpen: (value: boolean) => void;
-}) => {
-  const form = useForm<IBookFormData>();
+  defaultValues?: IBook | null; // null means add, otherwise edit
+};
+
+const AddBookModal = ({ open, setOpen, defaultValues }: Props) => {
+  const form = useForm<IBookFormData>({
+    defaultValues: {
+      title: '',
+      author: '',
+      genre: '',
+      isbn: '',
+      description: '',
+      copies: 1
+    },
+  });
   const [addBook] = useAddBookMutation();
+  const [editBook] = useEditBookMutation();
+
+  // Pre-fill when editing
+  useEffect(() => {
+    if (defaultValues) {
+      form.reset(defaultValues);
+    }
+  }, [defaultValues, form]);
 
   const onSubmit = async (data: IBookFormData) => {
     try {
       data.available = true;
       data.copies = Number(data.copies);
-      await addBook(data).unwrap();
-      toast.success('Book added successfully!');
+
+      if (defaultValues?._id) {
+        await editBook({ id: defaultValues._id, data }).unwrap();
+        toast.success('Book updated successfully!');
+      } else {
+        await addBook(data).unwrap();
+        toast.success('Book added successfully!');
+      }
+
       form.reset();
       setOpen(false);
     } catch (error) {
@@ -129,7 +154,7 @@ const AddBookModal = ({
                   <FormItem>
                     <FormLabel>Copies</FormLabel>
                     <FormControl>
-                      <Input placeholder='Copies' {...field} />
+                      <Input type='number' placeholder='Copies' {...field} />
                     </FormControl>
                   </FormItem>
                 )}
@@ -139,7 +164,9 @@ const AddBookModal = ({
                 <DialogClose asChild>
                   <Button variant='outline'>Cancel</Button>
                 </DialogClose>
-                <Button type='submit'>Add Book</Button>
+                <Button type='submit'>
+                  {defaultValues?._id ? 'Update Book' : 'Add Book'}
+                </Button>
               </DialogFooter>
             </form>
           </Form>

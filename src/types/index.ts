@@ -5,6 +5,7 @@ export interface IBook {
     genre: string;
     isbn: string;
     copies: number;
+    description: string;
     available: boolean
 }
 
