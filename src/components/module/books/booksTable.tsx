@@ -14,18 +14,20 @@ import { useDeleteBookMutation, useGetBooksQuery } from '@/redux/api/baseApi';
 import { type IBook } from '@/types';
 import BookTableSkeleton from './bookTableSkeleton';
 import { toast } from 'sonner';
+import { useState } from 'react';
+import ConfirmDialog from '../addBook/confirmDialog';
 
 const BooksTable = () => {
-
+  const [openConfirm, setOpenConfirm] = useState(false);
+  const [selectedId, setSelectedId] = useState<string | null>(null);
   const { data, isLoading } = useGetBooksQuery(undefined);
   const [deleteBook] = useDeleteBookMutation();
 
-  
-
-  const handleDelete = async (id: string) => {
+  const handleDelete = async () => {
     try {
-      await deleteBook(id).unwrap();
+      await deleteBook(selectedId).unwrap();
       toast.success('Book deleted!');
+      setOpenConfirm(false);
     } catch (error) {
       toast.error('Failed to delete.');
       console.log(error);
@@ -49,6 +51,15 @@ const BooksTable = () => {
             <TableHead className='text-right pr-[22px]'>Actions</TableHead>
           </TableRow>
         </TableHeader>
+        <ConfirmDialog
+          open={openConfirm}
+          setOpen={setOpenConfirm}
+          onCancel={() => {
+            setOpenConfirm(false);
+            setSelectedId(null);
+          }}
+          onConfirm={handleDelete}
+        />
         <TableBody className=''>
           {isLoading ? (
             <BookTableSkeleton data={data} />
@@ -87,7 +98,10 @@ const BooksTable = () => {
                     variant={'ghost'}
                     size='sm'
                     className='hover:text-red-600'
-                    onClick={() => handleDelete(book._id)}
+                    onClick={() => {
+                      setSelectedId(book._id);
+                      setOpenConfirm(true);
+                    }}
                   >
                     <Trash2 />
                   </Button>
