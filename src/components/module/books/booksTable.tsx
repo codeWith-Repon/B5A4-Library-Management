@@ -10,7 +10,10 @@ import {
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { BookOpen, Edit, Trash2 } from 'lucide-react';
-import { useDeleteBookMutation, useGetBooksQuery } from '@/redux/api/baseApi';
+import {
+  useDeleteBookMutation,
+  useGetBooksQuery,
+} from '@/redux/api/baseApi';
 import { type IBook } from '@/types';
 import BookTableSkeleton from './bookTableSkeleton';
 import { toast } from 'sonner';
@@ -25,6 +28,7 @@ const BooksTable = () => {
 
   const handleDelete = async () => {
     try {
+      if (!selectedId) return;
       await deleteBook(selectedId).unwrap();
       toast.success('Book deleted!');
       setOpenConfirm(false);
@@ -33,6 +37,8 @@ const BooksTable = () => {
       console.log(error);
     }
   };
+
+ 
 
   return (
     <div className='mt-4 w-full overflow-auto border border-gray-200 rounded-lg shadow dark:border-gray-800'>
@@ -106,7 +112,10 @@ const BooksTable = () => {
                     <Trash2 />
                   </Button>
                   <Link to={`/borrow/${book._id}`}>
-                    <Button variant={'ghost'} size='sm'>
+                    <Button
+                      variant={'ghost'}
+                      size='sm'
+                    >
                       <BookOpen />
                     </Button>
                   </Link>
