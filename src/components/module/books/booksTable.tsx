@@ -14,22 +14,13 @@ import { useDeleteBookMutation, useGetBooksQuery } from '@/redux/api/baseApi';
 import { type IBook } from '@/types';
 import BookTableSkeleton from './bookTableSkeleton';
 import { toast } from 'sonner';
-import { useState } from 'react';
-import AddBookModal from '../addBook/addBookModal';
 
 const BooksTable = () => {
-  const [modalOpen, setmodalOpen] = useState(false);
-  const [selectedBook, setSelectedBook] = useState<IBook | null>(null);
-  // console.log(selectedBook);
 
   const { data, isLoading } = useGetBooksQuery(undefined);
   const [deleteBook] = useDeleteBookMutation();
 
-  const handleEdit = (book: IBook) => {
-    setSelectedBook(book);
-    setmodalOpen(true);
-    // console.log(book);
-  };
+  
 
   const handleDelete = async (id: string) => {
     try {
@@ -44,7 +35,9 @@ const BooksTable = () => {
   return (
     <div className='mt-4 w-full overflow-auto border border-gray-200 rounded-lg shadow dark:border-gray-800'>
       <Table>
-        <TableCaption className='sr-only'>List of all books in the system.</TableCaption>
+        <TableCaption className='sr-only'>
+          List of all books in the system.
+        </TableCaption>
         <TableHeader>
           <TableRow className='bg-gray-100 dark:bg-gray-800'>
             <TableHead className='pl-[22px]'>Title</TableHead>
@@ -84,13 +77,11 @@ const BooksTable = () => {
                   )}
                 </TableCell>
                 <TableCell className='text-right pr-[22px]'>
-                  <Button
-                    variant={'ghost'}
-                    size='sm'
-                    onClick={() => handleEdit(book)}
-                  >
-                    <Edit />
-                  </Button>
+                  <Link to={`/edit-book/${book._id}`}>
+                    <Button variant={'ghost'} size='sm'>
+                      <Edit />
+                    </Button>
+                  </Link>
 
                   <Button
                     variant={'ghost'}
@@ -111,12 +102,6 @@ const BooksTable = () => {
           )}
         </TableBody>
       </Table>
-
-      <AddBookModal
-        open={modalOpen}
-        setOpen={setmodalOpen}
-        defaultValues={selectedBook}
-      />
     </div>
   );
 };
