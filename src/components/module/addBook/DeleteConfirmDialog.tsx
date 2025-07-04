@@ -31,11 +31,11 @@ const ConfirmDialog = ({ open, setOpen, onCancel, onConfirm }: Props) => {
 
           <DialogFooter>
             <DialogClose asChild>
-              <Button variant='outline' onClick={onCancel}>
+              <Button variant='outline' onClick={onCancel} className='cursor-pointer'>
                 Cancel
               </Button>
             </DialogClose>
-            <Button variant={'destructive'} onClick={onConfirm}>
+            <Button variant={'destructive'} onClick={onConfirm} className='cursor-pointer'>
               Confirm
             </Button>
           </DialogFooter>

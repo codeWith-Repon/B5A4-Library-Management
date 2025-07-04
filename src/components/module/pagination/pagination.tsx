@@ -19,7 +19,7 @@ const PaginationAllBook = ({
 }: Props) => {
   return (
     <Pagination>
-      <PaginationContent>
+      <PaginationContent className='flex items-center justify-center'>
         <PaginationItem>
           {currentPage > 1 ? (
             <PaginationPrevious className='cursor-pointer' onClick={() => onPageChange(currentPage - 1)} />
@@ -30,11 +30,12 @@ const PaginationAllBook = ({
 
         {Array.from({ length: totalPages }, (_, i) => (
           <PaginationItem key={i}>
-            <PaginationLink
+            <PaginationLink 
               onClick={(e) => {
                 e.preventDefault();
                 onPageChange(i + 1);
               }}
+              className='cursor-pointer'
               isActive={i + 1 === currentPage}
             >
               {i + 1}

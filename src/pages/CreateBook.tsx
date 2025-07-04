@@ -1,4 +1,4 @@
-import AddBookModal from '@/components/module/addBook/addBookModal';
+import AddBookModal from '@/components/module/addBook/addBookForm';
 
 const CreateBook = () => {
   return (

@@ -131,7 +131,7 @@ const AddBookModal = ({ defaultValues }: Props) => {
             )}
           />
 
-          <Button type='submit'>
+          <Button type='submit' className='cursor-pointer'>
             {defaultValues?._id ? 'Update Book' : 'Add Book'}
           </Button>
         </form>

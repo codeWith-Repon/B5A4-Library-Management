@@ -1,7 +1,8 @@
 import { navItems } from '@/lib/data';
-import { Link } from 'react-router-dom';
+import { Link, NavLink } from 'react-router-dom';
 import { ModeToggle } from '../mode-toggle';
 import { BookOpenCheck } from 'lucide-react';
+import { cn } from '@/lib/utils';
 
 const Navbar = () => {
   return (
@@ -13,9 +14,15 @@ const Navbar = () => {
 
         <div className='flex gap-6 font-semibold items-center justify-center'>
           {navItems.map((item) => (
-            <Link key={item.path} to={item.path} className='nav-link'>
+            <NavLink
+              key={item.path}
+              to={item.path}
+              className={({ isActive }) =>
+                cn('nav-link', isActive && 'text-red-500')
+              }
+            >
               {item.label}
-            </Link>
+            </NavLink>
           ))}
           <div className=''>
             <ModeToggle />
