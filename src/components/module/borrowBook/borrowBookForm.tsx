@@ -8,7 +8,7 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 
-import { ChevronDownIcon } from 'lucide-react';
+import { ChevronDownIcon, Loader } from 'lucide-react';
 import { Calendar } from '@/components/ui/calendar';
 import {
   Popover,
@@ -24,6 +24,7 @@ import {
 } from '@/redux/api/baseApi';
 import { useNavigate, useParams } from 'react-router-dom';
 import { toast } from 'sonner';
+import { cn } from '@/lib/utils';
 
 type BorrowFormData = {
   quantity: number;
@@ -35,12 +36,12 @@ const BorrowBookForm = () => {
   const navigate = useNavigate();
 
   const [open, setOpen] = useState(false);
-  const [borrowBook] = useBorrowBookMutation();
+  const [borrowBook, { isLoading: buttonLoading }] = useBorrowBookMutation();
 
   const { bookId } = useParams();
 
-  const { data, isLoading } = useGetBookByIdQuery(bookId);
-  console.log(data);
+  const { data: bookData, isLoading } = useGetBookByIdQuery(bookId);
+  console.log(bookData);
   const onSubmit = async (data: BorrowFormData) => {
     try {
       if (!bookId) return;
@@ -53,8 +54,9 @@ const BorrowBookForm = () => {
       await borrowBook(payload).unwrap();
       toast.success('Book borrowed successfully!');
       navigate('/borrow-summary');
-    } catch (error) {
-      toast.error('Failed to borrow book.');
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (error: any) {
+      toast.error(error?.data?.message || 'Failed to borrow book.');
       console.log(error);
     }
   };
@@ -64,7 +66,7 @@ const BorrowBookForm = () => {
       <p className='mb-3 font-semibold'>
         Book name:{' '}
         <span className='font-bold '>
-          {isLoading ? 'Loading...' : data?.data?.title}
+          {isLoading ? 'Loading...' : bookData?.data?.title}
         </span>
       </p>
       <Form {...form}>
@@ -128,7 +130,22 @@ const BorrowBookForm = () => {
             )}
           />
 
-          <Button type='submit'>Submit</Button>
+          {buttonLoading ? (
+            <Button>
+              <span className='flex items-center gap-2 opacity-50 cursor-not-allowed'>
+                <Loader className='h-4 w-4 animate-spin' />
+                Loading...
+              </span>
+            </Button>
+          ) : (
+            <Button
+              type='submit'
+              className={cn('cursor-pointer', isLoading && 'opacity-50')}
+              disabled={isLoading}
+            >
+              Submit
+            </Button>
+          )}
         </form>
       </Form>
     </div>
