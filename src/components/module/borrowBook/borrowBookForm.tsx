@@ -18,7 +18,10 @@ import {
 
 import { useForm } from 'react-hook-form';
 import { useState } from 'react';
-import { useBorrowBookMutation } from '@/redux/api/baseApi';
+import {
+  useBorrowBookMutation,
+  useGetBookByIdQuery,
+} from '@/redux/api/baseApi';
 import { useNavigate, useParams } from 'react-router-dom';
 import { toast } from 'sonner';
 
@@ -36,6 +39,8 @@ const BorrowBookForm = () => {
 
   const { bookId } = useParams();
 
+  const { data, isLoading } = useGetBookByIdQuery(bookId);
+  console.log(data);
   const onSubmit = async (data: BorrowFormData) => {
     try {
       if (!bookId) return;
@@ -56,6 +61,12 @@ const BorrowBookForm = () => {
 
   return (
     <div className='max-w-7xl mx-auto p-4 mt-10 border border-gray-200 rounded-lg shadow dark:border-gray-800'>
+      <p className='mb-3 font-semibold'>
+        Book name:{' '}
+        <span className='font-bold '>
+          {isLoading ? 'Loading...' : data?.data?.title}
+        </span>
+      </p>
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className='space-y-8'>
           <FormField

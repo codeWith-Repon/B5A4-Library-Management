@@ -7,13 +7,10 @@ import {
   TableHeader,
   TableRow,
 } from '../../ui/table';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { BookOpen, Edit, Trash2 } from 'lucide-react';
-import {
-  useDeleteBookMutation,
-  useGetBooksQuery,
-} from '@/redux/api/baseApi';
+import { useDeleteBookMutation, useGetBooksQuery } from '@/redux/api/baseApi';
 import { type IBook } from '@/types';
 import BookTableSkeleton from './bookTableSkeleton';
 import { toast } from 'sonner';
@@ -21,6 +18,7 @@ import { useState } from 'react';
 import ConfirmDialog from '../addBook/confirmDialog';
 
 const BooksTable = () => {
+  const navigate = useNavigate();
   const [openConfirm, setOpenConfirm] = useState(false);
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const { data, isLoading } = useGetBooksQuery(undefined);
@@ -37,8 +35,6 @@ const BooksTable = () => {
       console.log(error);
     }
   };
-
- 
 
   return (
     <div className='mt-4 w-full overflow-auto border border-gray-200 rounded-lg shadow dark:border-gray-800'>
@@ -75,7 +71,12 @@ const BooksTable = () => {
                 key={book._id}
                 className='hover:bg-gray-50 dark:hover:bg-gray-900 transition'
               >
-                <TableCell className='font-medium pl-[22px]'>
+                <TableCell
+                  className='font-medium pl-[22px] hover:underline cursor-pointer'
+                  onClick={() => {
+                    navigate(`/books/${book._id}`);
+                  }}
+                >
                   {book.title}
                 </TableCell>
                 <TableCell>{book.author}</TableCell>
@@ -112,10 +113,7 @@ const BooksTable = () => {
                     <Trash2 />
                   </Button>
                   <Link to={`/borrow/${book._id}`}>
-                    <Button
-                      variant={'ghost'}
-                      size='sm'
-                    >
+                    <Button variant={'ghost'} size='sm'>
                       <BookOpen />
                     </Button>
                   </Link>
