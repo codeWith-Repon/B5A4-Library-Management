@@ -16,14 +16,19 @@ import BookTableSkeleton from './bookTableSkeleton';
 import { toast } from 'sonner';
 import { useState } from 'react';
 import ConfirmDialog from '../addBook/confirmDialog';
+import PaginationAllBook from '../pagination/pagination';
 
 const BooksTable = () => {
   const navigate = useNavigate();
   const [openConfirm, setOpenConfirm] = useState(false);
   const [selectedId, setSelectedId] = useState<string | null>(null);
-  const { data, isLoading } = useGetBooksQuery(undefined);
+  const [page, setPage] = useState(1);
+  const [limit] = useState(5);
+  const { data, isLoading } = useGetBooksQuery({page, limit});
   const [deleteBook] = useDeleteBookMutation();
 
+  const totalPages = Math.ceil(data?.meta.total / data?.meta.limit) 
+ 
   const handleDelete = async () => {
     try {
       if (!selectedId) return;
@@ -36,7 +41,9 @@ const BooksTable = () => {
     }
   };
 
+
   return (
+  <div className='flex flex-col gap-5'>
     <div className='mt-4 w-full overflow-auto border border-gray-200 rounded-lg shadow dark:border-gray-800'>
       <Table>
         <TableCaption className='sr-only'>
@@ -112,17 +119,33 @@ const BooksTable = () => {
                   >
                     <Trash2 />
                   </Button>
-                  <Link to={`/borrow/${book._id}`}>
-                    <Button variant={'ghost'} size='sm'>
+                  {book.available ? (
+                    <Link to={`/borrow/${book._id}`}>
+                      <Button
+                        variant={'ghost'}
+                        size='sm'
+                        disabled={!book.available}
+                      >
+                        <BookOpen />
+                      </Button>
+                    </Link>
+                  ) : (
+                    <Button variant={'ghost'} size='sm' disabled>
                       <BookOpen />
                     </Button>
-                  </Link>
+                  )}
                 </TableCell>
               </TableRow>
             ))
           )}
         </TableBody>
       </Table>
+       </div>
+      <PaginationAllBook 
+        totalPages={totalPages} 
+        currentPage={page} 
+        onPageChange={(newPage)=> setPage(newPage)}
+        />
     </div>
   );
 };

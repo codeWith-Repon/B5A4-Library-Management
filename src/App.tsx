@@ -6,7 +6,7 @@ function App() {
   return (
     <>
       <Navbar />
-      <main className='min-h-[80vh]'>
+      <main className='min-h-[78vh]'>
         <Outlet />
       </main>
       <Footer />

@@ -7,7 +7,10 @@ export const baseApi = createApi({
     tagTypes: ['books', 'borrowedBooks'],
     endpoints: (builder) => ({
         getBooks: builder.query({
-            query: () => `/books/`,
+            query: ({page = 1, limit = 2}) =>({
+                url:  `/books/`,
+                params: {page, limit}
+            }),
             providesTags: ['books']
         }),
         getBookById: builder.query({
